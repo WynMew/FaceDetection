@@ -28,7 +28,7 @@ rectangles = det.scanImgOverScale(imgSingleChannel)
 
 end_time = time()
 
-print "Number of rectangles: ", len(rectangles)
-print "Cost time: ", end_time - start_time
+print("Number of rectangles: ", len(rectangles))
+print("Cost time: ", end_time - start_time)
 
 det.showResult(img, rectangles)
