@@ -20,6 +20,7 @@ from matplotlib     import pyplot
 from adaboost       import getCachedAdaBoost
 import pylab
 import numpy
+import math
 
 
 class Detector:
@@ -35,25 +36,32 @@ class Detector:
 
         SEARCH_WIN_WIDTH  = int(TRAINING_IMG_WIDTH  * scale)
         SEARCH_WIN_HEIGHT = int(TRAINING_IMG_HEIGHT * scale)
-
         width     = ImgWidth - SEARCH_WIN_WIDTH - 10
         height    = ImgHeight - SEARCH_WIN_HEIGHT - 10
-
         step      = SEARCH_WIN_WIDTH/SEARCH_WIN_STEP
-
         subWinNum = (width/step + 1) * (height/step + 1)
-
-        subImages = numpy.zeros(subWinNum, dtype = object)
-        subWins   = numpy.zeros(subWinNum, dtype = object)
+        #print('subWinNum=', subWinNum) # 1746.3296398891966
+        subImages = numpy.zeros(int(subWinNum), dtype = object)
+        subWins   = numpy.zeros(int(subWinNum), dtype = object)
 
         idx = 0
-        for x in xrange(0, width, step):
-            for y in xrange(0, height, step):
+        #print('step=', step)
+        #print('subImages=', len(subImages))
+        #print('width=', width) # 204
+        for x in range(0, int(width), int(step)):
+            #print(x)
+            for y in range(0, int(height), int(step)):
+                #print(y)
+                #print(idx)
                 subWins[idx]   = (x, y, SEARCH_WIN_WIDTH, SEARCH_WIN_HEIGHT)
-
                 subImages[idx] = Image(Mat = image[y:y+SEARCH_WIN_HEIGHT, x:x+SEARCH_WIN_WIDTH])
                 idx += 1
-
+                if idx == int(subWinNum):
+                    print('break 1')
+                    break
+            if idx == int(subWinNum):
+                print('break 2')
+                break
         assert idx <= subWinNum
 
         subImgNum = idx
@@ -63,7 +71,7 @@ class Detector:
         haar_scaled = Feature(SEARCH_WIN_WIDTH,   SEARCH_WIN_HEIGHT)
         haar_train  = Feature(TRAINING_IMG_WIDTH, TRAINING_IMG_HEIGHT)
 
-        for n in xrange(model.N):
+        for n in range(model.N):
             selFeatures[n] = haar_train.features[ model.G[n].opt_dimension ] + tuple([model.G[n].opt_dimension])
 
         mat = numpy.zeros((haar_train.featuresNum, subImgNum), dtype=numpy.float16)
@@ -76,7 +84,7 @@ class Detector:
             w = int(w * scale)
             h = int(h * scale)
 
-            for i in xrange(subImgNum):
+            for i in range(subImgNum):
                 if   types == HAAR_FEATURE_TYPE_I:
                     mat[dim][i] = haar_scaled.VecFeatureTypeI(subImages[i].vecImg, x, y, w, h)
                 elif types == HAAR_FEATURE_TYPE_II:
@@ -89,7 +97,7 @@ class Detector:
         output = model.grade(mat)
 
         rectangle = []
-        for i in xrange(len(output)):
+        for i in range(len(output)):
             if output[i] > AB_TH:
                 candidate = numpy.array(subWins[i])
                 x, y, w, h = candidate
@@ -106,6 +114,7 @@ class Detector:
         from config import ADABOOST_CACHE_FILE
         from config import ADABOOST_LIMIT
 
+        #print(ADABOOST_CACHE_FILE)
         model = getCachedAdaBoost(filename = ADABOOST_CACHE_FILE + str(0), limit = ADABOOST_LIMIT)
 
         rectangles = []
@@ -121,8 +130,8 @@ class Detector:
         # number of rectangles
         numRec = len(rectangles)
 
-        for i in xrange(numRec):
-            for j in xrange(i+1, numRec):
+        for i in range(numRec):
+            for j in range(i+1, numRec):
                 if rectangles[i][4] < rectangles[j][4]:
                     rectangles[i], rectangles[j] = \
                     tuple(rectangles[j]), tuple(rectangles[i])
@@ -137,11 +146,11 @@ class Detector:
         |     |____2__|
         \/ y
         """
-        reduced = [i for i in xrange(numRec)]
-        for i in xrange(numRec):
+        reduced = [i for i in range(numRec)]
+        for i in range(numRec):
             x1, y1, w1, h1, score1 = rectangles[i]
             area_1 = w1 * h1
-            for j in xrange(i+1, numRec):
+            for j in range(i+1, numRec):
                 x2, y2, w2, h2, score2 = rectangles[j]
                 area_2 = h2 * w2
 
@@ -225,5 +234,5 @@ class Detector:
         for rectangle in rectangles:
             x, y, width, height, score = rectangle
 
-            print rectangle
+            print(rectangle)
             self.drawRectangle(image, x, y, width, height)
