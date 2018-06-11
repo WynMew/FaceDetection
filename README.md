@@ -6,6 +6,7 @@
 
 <img src="https://img.shields.io/dub/l/vibe-d.svg" />
 
+Revised by Wyn Mew (support python3)
 
 This project name as `E-Face` which is a implementation of face detection algorithm.
 
