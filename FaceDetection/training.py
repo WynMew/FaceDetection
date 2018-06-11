@@ -25,13 +25,13 @@ if __name__ == "__main__":
     model      = Cascade(TRAINING_FACE, TRAINING_NONFACE, limit = CASACADE_LIMIT)
     end_time   = time()
 
-    print "total Cost time: ", end_time - start_time
+    print("total Cost time: ", end_time - start_time)
 
     try:
         model.train()
         model.save()
     except KeyboardInterrupt:
-        print "key board interrupt happened. training pause."
+        print("key board interrupt happened. training pause.")
     
     
 
