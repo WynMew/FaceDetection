@@ -53,6 +53,7 @@ from config import HAAR_FEATURE_TYPE_IV
 from config import HAAR_FEATURE_TYPE_V
 
 from image import Image
+import math
 
 
 class Feature:
@@ -190,8 +191,8 @@ class Feature:
 
         features = []
         for types in self.featureTypes:
-            for w in xrange(1, width_Limit[types]):
-                for h in xrange(1, height_Limit[types]):
+            for w in range(1, math.floor(width_Limit[types])):
+                for h in range(1, math.floor(height_Limit[types])):
 
                     if w == 1 and h == 1:
                         continue
@@ -200,37 +201,37 @@ class Feature:
 
                         x_limit = win_Width  - w
                         y_limit = win_Height - 2*h
-                        for x in xrange(1, x_limit):
-                            for y in xrange(1, y_limit):
+                        for x in range(1, x_limit):
+                            for y in range(1, y_limit):
                                 features.append( (types, x, y, w, h))
 
                     elif types == HAAR_FEATURE_TYPE_II:
                         x_limit = win_Width  - 2*w
                         y_limit = win_Height - h
-                        for x in xrange(1, x_limit):
-                            for y in xrange(1, y_limit):
+                        for x in range(1, x_limit):
+                            for y in range(1, y_limit):
                                 features.append( (types, x, y, w, h))
 
                     elif types == HAAR_FEATURE_TYPE_III:
                         x_limit = win_Width  - 3*w
                         y_limit = win_Height - h
-                        for x in xrange(1, x_limit):
-                            for y in xrange(1, y_limit):
+                        for x in range(1, x_limit):
+                            for y in range(1, y_limit):
                                 features.append( (types, x, y, w, h))
 
 
                     elif types == HAAR_FEATURE_TYPE_IV:
                         x_limit = win_Width  - w
                         y_limit = win_Height - 3*h
-                        for x in xrange(1, x_limit):
-                            for y in xrange(1, y_limit):
+                        for x in range(1, x_limit):
+                            for y in range(1, y_limit):
                                 features.append( (types, x, y, w, h))
 
                     elif types == HAAR_FEATURE_TYPE_V:
                         x_limit = win_Width  - 2*w
                         y_limit = win_Height - 2*h
-                        for x in xrange(1, x_limit):
-                            for y in xrange(1, y_limit):
+                        for x in range(1, x_limit):
+                            for y in range(1, y_limit):
                                 features.append( (types, x, y, w, h))
 
         return features
@@ -242,7 +243,7 @@ class Feature:
         assert img.img.shape[0] == self.img_Height
         assert img.img.shape[1] == self.img_Width
 
-        for i in xrange(self.featuresNum):
+        for i in range(self.featuresNum):
             type, x, y, w, h = self.features[i]
 
             if   type == HAAR_FEATURE_TYPE_I:
@@ -274,44 +275,44 @@ class Feature:
         assert y >= 0 and y < self.img_Height
         assert width > 0 and height > 0
 
-        image = numpy.array([[125. for i in xrange(self.img_Width)]
-                                 for j in xrange(self.img_Height)])
+        image = numpy.array([[125. for i in range(self.img_Width)]
+                                 for j in range(self.img_Height)])
 
         if types == HAAR_FEATURE_TYPE_I:
-            for i in xrange(y, y + height * 2):
-                for j in xrange(x, x + width):
+            for i in range(y, y + height * 2):
+                for j in range(x, x + width):
                     if i < y + height:
                         image[i][j] = BLACK
                     else:
                         image[i][j] = WHITE
 
         elif types == HAAR_FEATURE_TYPE_II:
-            for i in xrange(y, y + height):
-                for j in xrange(x, x + width * 2):
+            for i in range(y, y + height):
+                for j in range(x, x + width * 2):
                     if j < x + width:
                         image[i][j] = WHITE
                     else:
                         image[i][j] = BLACK
 
         elif types == HAAR_FEATURE_TYPE_III:
-            for i in xrange(y, y + height):
-                for j in xrange(x, x + width * 3):
+            for i in range(y, y + height):
+                for j in range(x, x + width * 3):
                     if j >= (x + width) and j < (x + width * 2):
                         image[i][j] = BLACK
                     else:
                         image[i][j] = WHITE
 
         elif types == HAAR_FEATURE_TYPE_IV:
-            for i in xrange(y, y + height*3):
-                for j in xrange(x, x + width):
+            for i in range(y, y + height*3):
+                for j in range(x, x + width):
                     if i >= (y + height) and i < (y + height * 2):
                         image[i][j] = BLACK
                     else:
                         image[i][j] = WHITE
 
         elif types == HAAR_FEATURE_TYPE_V:
-            for i in xrange(y, y + height * 2):
-                for j in xrange(x, x + width * 2):
+            for i in range(y, y + height * 2):
+                for j in range(x, x + width * 2):
                     if (j < x + width and i < y + height) or\
                        (j >= x + width and i >= y + height):
                         image[i][j] = BLACK
