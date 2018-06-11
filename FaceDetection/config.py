@@ -14,15 +14,15 @@ DEBUG_MODEL   = True
 USING_CASCADE = False
 
 # training set directory for face and non-face images
-TRAINING_FACE    = "E:/JasonLeasterGraduationProject/FaceDetection/TrainingImages/FACES/"
-TRAINING_NONFACE = "E:/JasonLeasterGraduationProject/FaceDetection/TrainingImages/NFACES/"
+TRAINING_FACE    = "/home/wynmew/workspace/FaceDetection/FaceDetection/TrainingImages/FACES/"
+TRAINING_NONFACE = "/home/wynmew/workspace/FaceDetection/FaceDetection/TrainingImages/NFACES/"
 
 # test set directory for face and non-face images
 TEST_FACE        = "./TrainingImages/FACES/"
 TEST_NONFACE     = "./TrainingImages/NFACES/"
 
 # single image for testing
-TEST_IMG         = "./Test/soccer.gif"
+TEST_IMG         = "./Test/nens.png"
 
 FEATURE_FILE_TRAINING = "./features/features_train.cache"
 FEATURE_FILE_TESTING  = "./features/features_test.cache"
@@ -34,7 +34,7 @@ FEATURE_FILE_SUBSET_1 = "./features/features_train_subset1.cache"
 # For parallel
 PROCESS_NUM = 2
 
-ADABOOST_CACHE_FILE = "./model/adaboost_classifier.cache"
+ADABOOST_CACHE_FILE = "./model/adaboost_classifier.cache0"
 ROC_FILE            = "./model/roc.cache"
 
 FIGURES             = "./figure/"
