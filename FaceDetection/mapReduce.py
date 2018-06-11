@@ -36,7 +36,7 @@ def map(Face, NonFace):
     images_num= len(images)
     processes = []
 
-    for i in xrange(PROCESS_NUM):
+    for i in range(PROCESS_NUM):
         start = int((i    *1./PROCESS_NUM) * images_num)
         end   = int(((i+1)*1./PROCESS_NUM) * images_num )
         sub_imgs = images[start:end]
@@ -46,10 +46,10 @@ def map(Face, NonFace):
                                     FEATURE_FILE_SUBSET + str(i) + ".cache")) 
         processes.append(process)
         
-    for i in xrange(PROCESS_NUM):
+    for i in range(PROCESS_NUM):
         processes[i].start()
 
-    for i in xrange(PROCESS_NUM):
+    for i in range(PROCESS_NUM):
         processes[i].join()
 
 
@@ -60,7 +60,7 @@ def reduce():
 
     mats = []
     tot_samples = 0
-    for i in xrange(PROCESS_NUM):
+    for i in range(PROCESS_NUM):
         sub_mat = numpy.load(FEATURE_FILE_SUBSET + str(i) + ".cache" + ".npy")
         mats.append(sub_mat)
         tot_samples += sub_mat.shape[1]
@@ -69,14 +69,10 @@ def reduce():
 
     mat  = numpy.zeros((haar.featuresNum, tot_samples), numpy.float32)
     sample_readed = 0
-    for i in xrange(PROCESS_NUM):
-        for m in xrange(mats[i].shape[0]): # feature number
-            for n in xrange(mats[i].shape[1]): # sample number
-
+    for i in range(PROCESS_NUM):
+        for m in range(mats[i].shape[0]): # feature number
+            for n in range(mats[i].shape[1]): # sample number
                 mat[m][n + sample_readed] = mats[i][m][n]
-
         sample_readed += mats[i].shape[1]
-
     numpy.save(FEATURE_FILE_TRAINING, mat)
-
     return mat
