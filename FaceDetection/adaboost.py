@@ -33,6 +33,7 @@ from haarFeature    import Feature
 import numpy
 import time
 import pylab
+import math
 
 
 def getCachedAdaBoost(mat = None, label = None, filename = "", limit = 0):
@@ -40,12 +41,12 @@ def getCachedAdaBoost(mat = None, label = None, filename = "", limit = 0):
         Construct a AdaBoost object with cached data
         from file @ADABOOST_FILE """
 
-    fileObj = open(filename, "a+")
-
-    print "Constructing AdaBoost from existed model data"
+    #fileObj = open(filename, "a+")
+    fileObj = open(filename)
+    #print(fileObj)
+    print("Constructing AdaBoost from existed model data")
 
     tmp = fileObj.readlines()
-
     if len(tmp) == 0:
         raise ValueError("There is no cached AdaBoost model")
 
@@ -57,11 +58,11 @@ def getCachedAdaBoost(mat = None, label = None, filename = "", limit = 0):
     else:
         model.weakerLimit = weakerNum
 
-    for i in xrange(0, len(tmp), 4):
+    for i in range(0, len(tmp), 4):
 
         alpha, dimension, direction, threshold = None, None, None, None
 
-        for j in xrange(i, i + 4):
+        for j in range(i, i + 4):
             if   (j % 4) == 0:
                 alpha     = float(tmp[j])
             elif (j % 4) == 1:
@@ -78,9 +79,9 @@ def getCachedAdaBoost(mat = None, label = None, filename = "", limit = 0):
 
         if mat is not None:
             classifier.sampleNum = mat.shape[1]
-
-        model.G[i/4]     = classifier
-        model.alpha[i/4] = alpha
+        #print('i=', i)
+        model.G[int(i/4)]     = classifier
+        model.alpha[int(i/4)] = alpha
         model.N         += 1
 
     model._mat = mat
@@ -91,7 +92,7 @@ def getCachedAdaBoost(mat = None, label = None, filename = "", limit = 0):
     if label is not None:
         model.samplesNum = len(label)
 
-    print "Construction finished"
+    print("Construction finished")
     fileObj.close()
 
     return model
@@ -134,11 +135,12 @@ class AdaBoost:
             self.accuracy = []
 
         self.Weaker = classifier
-
+        limit = math.floor(limit)
         self.weakerLimit = limit
+        #print('limit=', limit)
 
-        self.G      = [None for _ in xrange(limit)]
-        self.alpha  = [  0  for _ in xrange(limit)]
+        self.G      = [None for _ in range(limit)]
+        self.alpha  = [  0  for _ in range(limit)]
         self.N      = 0
         self.detectionRate = 0.
 
@@ -163,7 +165,7 @@ class AdaBoost:
         Num_fn = 0 # Number of false negative
         Num_tn = 0 # Number of true negative
         Num_fp = 0 # Number of false positive
-        for i in xrange(self.samplesNum):
+        for i in range(self.samplesNum):
             if self._label[i] == LABEL_POSITIVE:
                 if output[i] == LABEL_POSITIVE:
                     Num_tp += 1
@@ -188,7 +190,7 @@ class AdaBoost:
 
         adaboost_start_time = time.time()
 
-        for m in xrange(self.weakerLimit):
+        for m in range(self.weakerLimit):
             self.N += 1
 
             if DEBUG_MODEL == True:
@@ -199,8 +201,8 @@ class AdaBoost:
             errorRate = self.G[m].train()
 
             if DEBUG_MODEL == True:
-                print "Time for training WeakClassifier:", \
-                        time.time() - weaker_start_time
+                print("Time for training WeakClassifier:", \
+                        time.time() - weaker_start_time)
 
             if errorRate < 0.0001:
                 errorRate = 0.0001
@@ -210,7 +212,7 @@ class AdaBoost:
 
             output = self.G[m].prediction(self._mat)
 
-            for i in xrange(self.samplesNum):
+            for i in range(self.samplesNum):
                 #self.W[i] *= numpy.exp(-self.alpha[m] * self._label[i] * output[i])
                 if self._label[i] == output[i]:
                     self.W[i] *=  beta
@@ -221,24 +223,24 @@ class AdaBoost:
                 self.th, self.detectionRate = self.findThreshold(EXPECTED_TPR)
 
             if self.is_good_enough():
-                print (self.N) ," weak classifier is enough to ",
-                print "meet the request which given by user."
-                print "Training Done :)"
+                print ((self.N) ," weak classifier is enough to ",)
+                print ("meet the request which given by user.")
+                print ("Training Done :)")
                 break
 
             if DEBUG_MODEL is True:
-                print "weakClassifier:", self.N
-                print "errorRate     :", errorRate
-                print "accuracy      :", self.accuracy[-1]
-                print "detectionRate :", self.detectionRate
-                print "AdaBoost's Th :", self.th
-                print "alpha         :", self.alpha[m]
+                print ("weakClassifier:", self.N)
+                print ("errorRate     :", errorRate)
+                print ("accuracy      :", self.accuracy[-1])
+                print ("detectionRate :", self.detectionRate)
+                print ("AdaBoost's Th :", self.th)
+                print ("alpha         :", self.alpha[m])
 
         #self.showErrRates()
         #self.showROC()
 
-        print "The time cost of training this AdaBoost model:",\
-                time.time() - adaboost_start_time
+        print("The time cost of training this AdaBoost model:",\
+                time.time() - adaboost_start_time)
 
         output = self.prediction(self._mat, self.th)
         return output, self.fpr
@@ -252,7 +254,7 @@ class AdaBoost:
 
         output = numpy.zeros(sampleNum, dtype = numpy.float16)
 
-        for i in xrange(self.N):
+        for i in range(self.N):
             output += self.G[i].prediction(Mat) * self.alpha[i]
 
         return output
@@ -291,7 +293,7 @@ class AdaBoost:
         step      = -0.1
         threshold = numpy.arange(up__bound - step, low_bound + step, step)
 
-        for t in xrange(threshold.size):
+        for t in range(threshold.size):
 
             output = self.prediction(self._mat, threshold[t])
 
@@ -328,7 +330,7 @@ class AdaBoost:
         pyplot.title("The changes of accuracy (Figure by Jason Leaster)")
         pyplot.xlabel("Iteration times")
         pyplot.ylabel("Accuracy of Prediction")
-        pyplot.plot([i for i in xrange(self.N)], 
+        pyplot.plot([i for i in range(self.N)],
                     self.accuracy, '-.', 
                     label = "Accuracy * 100%")
         pyplot.axis([0., self.N, 0, 1.])
@@ -351,7 +353,7 @@ class AdaBoost:
         tprs      = numpy.zeros(threshold.size, dtype = numpy.float16)
         fprs      = numpy.zeros(threshold.size, dtype = numpy.float16)
 
-        for t in xrange(threshold.size):
+        for t in range(threshold.size):
 
             output = self.prediction(self._mat, threshold[t])
 
@@ -406,7 +408,7 @@ class AdaBoost:
         """
         fileObj = open(filename, "a+")
 
-        for m in xrange(self.N):
+        for m in range(self.N):
             fileObj.write(str(self.alpha[m]) + "\n")
             fileObj.write(str(self.G[m].opt_dimension) + "\n")
             fileObj.write(str(self.G[m].opt_direction) + "\n")
@@ -436,19 +438,19 @@ class AdaBoost:
         featuresAll = haar.features
         selFeatures = [] # selected features
 
-        for n in xrange(self.N):
+        for n in range(self.N):
             selFeatures.append(featuresAll[self.G[n].opt_dimension])
 
         classifierPic = numpy.zeros((IMG_HEIGHT, IMG_WIDTH))
 
-        for n in xrange(self.N):
+        for n in range(self.N):
             feature   = selFeatures[n]
             alpha     = self.alpha[n]
             direction = self.G[n].opt_direction
 
             (types, x, y, width, height) = feature
 
-            image = numpy.array([[155 for i in xrange(IMG_WIDTH)] for j in xrange(IMG_HEIGHT)])
+            image = numpy.array([[155 for i in range(IMG_WIDTH)] for j in range(IMG_HEIGHT)])
 
             assert x >= 0 and x < IMG_WIDTH
             assert y >= 0 and y < IMG_HEIGHT
@@ -462,40 +464,40 @@ class AdaBoost:
                 white = BLACK
 
             if types == HAAR_FEATURE_TYPE_I:
-                for i in xrange(y, y + height * 2):
-                    for j in xrange(x, x + width):
+                for i in range(y, y + height * 2):
+                    for j in range(x, x + width):
                         if i < y + height:
                             image[i][j] = black
                         else:
                             image[i][j] = white
 
             elif types == HAAR_FEATURE_TYPE_II:
-                for i in xrange(y, y + height):
-                    for j in xrange(x, x + width * 2):
+                for i in range(y, y + height):
+                    for j in range(x, x + width * 2):
                         if j < x + width:
                             image[i][j] = white
                         else:
                             image[i][j] = black
 
             elif types == HAAR_FEATURE_TYPE_III:
-                for i in xrange(y, y + height):
-                    for j in xrange(x, x + width * 3):
+                for i in range(y, y + height):
+                    for j in range(x, x + width * 3):
                         if j >= (x + width) and j < (x + width * 2):
                             image[i][j] = black
                         else:
                             image[i][j] = white
 
             elif types == HAAR_FEATURE_TYPE_IV:
-                for i in xrange(y, y + height*3):
-                    for j in xrange(x, x + width):
+                for i in range(y, y + height*3):
+                    for j in range(x, x + width):
                         if i >= (y + height) and i < (y + height * 2):
                             image[i][j] = black
                         else:
                             image[i][j] = white
 
             elif types == HAAR_FEATURE_TYPE_V:
-                for i in xrange(y, y + height * 2):
-                    for j in xrange(x, x + width * 2):
+                for i in range(y, y + height * 2):
+                    for j in range(x, x + width * 2):
                         if (j < x + width and i < y + height) or\
                            (j >= x + width and i >= y + height):
                             image[i][j] = white
