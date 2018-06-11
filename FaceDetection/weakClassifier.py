@@ -62,12 +62,11 @@ class WeakClassifier:
             # sampleDim == the number of features
             self.sampleDim, self.sampleNum = self._mat.shape
 
-            if W == None:
+            if W.any() == None:
                 self.numPos = numpy.count_nonzero(self._label == LABEL_POSITIVE)
                 self.numNeg = numpy.count_nonzero(self._label == LABEL_NEGATIVE)
-                pos_W = [1.0/(2 * self.numPos) for i in xrange(self.numPos)]
-                            
-                neg_W = [1.0/(2 * self.numNeg) for i in xrange(self.numNeg)]
+                pos_W = [1.0/(2 * self.numPos) for i in range(self.numPos)]
+                neg_W = [1.0/(2 * self.numNeg) for i in range(self.numNeg)]
                 self.weight = numpy.array(pos_W + neg_W)
 
             else:
@@ -158,7 +157,7 @@ class WeakClassifier:
 
     def train(self):
 
-        for dim in xrange(self.sampleDim):
+        for dim in range(self.sampleDim):
             err, threshold, direction = self.optimal(dim)
             if err < self.opt_errorRate:
                 self.opt_errorRate = err
@@ -204,11 +203,11 @@ class WeakClassifier:
 
         scope = (MaxVal - MinVal) / N
 
-        centers = [ (MinVal - scope/2)+ scope*i for i in xrange(N)]
-        counter = [ [0, 0] for i in xrange(N)]
+        centers = [ (MinVal - scope/2)+ scope*i for i in range(N)]
+        counter = [ [0, 0] for i in range(N)]
 
-        for j in xrange(N):
-            for i in xrange(self.sampleNum):
+        for j in range(N):
+            for i in range(self.sampleNum):
                 if abs(self._mat[dim][i] - centers[j]) < scope/2:
                     if self._label[i] == LABEL_POSITIVE:
                         counter[j][1] += 1
@@ -217,15 +216,15 @@ class WeakClassifier:
 
         posVal, negVal = [], []
 
-        for i in xrange(N):
+        for i in range(N):
             posVal.append(counter[i][1])
             negVal.append(counter[i][0])
 
         sumPosVal = sum(posVal)
         sumNegVal = sum(negVal)
 
-        for i in xrange(len(posVal)): posVal[i] /= (1. * sumPosVal)
-        for i in xrange(len(negVal)): negVal[i] /= (1. * sumNegVal)
+        for i in range(len(posVal)): posVal[i] /= (1. * sumPosVal)
+        for i in range(len(negVal)): negVal[i] /= (1. * sumNegVal)
 
         pyplot.title("A simple weak classifier")
         pyplot.plot(centers, posVal, "r-o", label = "Face class")
@@ -238,7 +237,7 @@ class WeakClassifier:
         sumNegW = 0.
         sumPos = 0.
         sumNeg = 0.
-        for i in xrange(self.sampleNum):
+        for i in range(self.sampleNum):
             if self._label[i] == LABEL_POSITIVE:
                 sumPos  += self.weight[i] * self._mat[dim][i]
                 sumPosW += self.weight[i]
@@ -250,7 +249,7 @@ class WeakClassifier:
         miuNeg = sumNeg / sumNegW
 
         threshold = (miuPos + miuNeg)/2
-        pyplot.plot([threshold for i in xrange(10)], [i for i in numpy.arange(0.0, 0.5, 0.05)], label = "threshold")
+        pyplot.plot([threshold for i in range(10)], [i for i in numpy.arange(0.0, 0.5, 0.05)], label = "threshold")
         pyplot.legend()
         pyplot.show()
 
