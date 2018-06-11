@@ -50,14 +50,14 @@ class Cascade:
             if DEBUG_MODEL is True:
                 self._mat = numpy.zeros((self.haar.featuresNum, tot_samples))
 
-                for i in xrange(self.Face.sampleNum):
+                for i in range(self.Face.sampleNum):
                     featureVec = self.haar.calFeatureForImg(self.Face.images[i])
-                    for j in xrange(self.haar.featuresNum):
+                    for j in range(self.haar.featuresNum):
                         self._mat[j][i                     ]  = featureVec[j]
 
-                for i in xrange(self.nonFace.sampleNum):
+                for i in range(self.nonFace.sampleNum):
                     featureVec = self.haar.calFeatureForImg(self.nonFace.images[i])
-                    for j in xrange(self.haar.featuresNum):
+                    for j in range(self.haar.featuresNum):
                         self._mat[j][i + self.Face.sampleNum] = featureVec[j]
 
                 numpy.save(FEATURE_FILE_TRAINING, self._mat)
@@ -73,13 +73,13 @@ class Cascade:
         assert sampleNum  == (POSITIVE_SAMPLE + NEGATIVE_SAMPLE)
         assert featureNum == FEATURE_NUM
 
-        Label_Face    = [+1 for i in xrange(POSITIVE_SAMPLE)]
-        Label_NonFace = [-1 for i in xrange(NEGATIVE_SAMPLE)]
+        Label_Face    = [+1 for i in range(POSITIVE_SAMPLE)]
+        Label_NonFace = [-1 for i in range(NEGATIVE_SAMPLE)]
 
         self._label = numpy.array(Label_Face + Label_NonFace)
         self.limit  = limit
         self.classifierNum     = 0
-        self.strong_classifier = [None for i in xrange(limit)]
+        self.strong_classifier = [None for i in range(limit)]
 
 
     def train(self):
@@ -138,16 +138,16 @@ class Cascade:
 
         counter = 0
         # only reserve negative samples which are classified wrong
-        for i in xrange(POSITIVE_SAMPLE, self._label.size):
+        for i in range(POSITIVE_SAMPLE, self._label.size):
             if output[i] != self._label[i]:
-                for j in xrange(FEATURE_NUM):
+                for j in range(FEATURE_NUM):
                     _mat[j][POSITIVE_SAMPLE + counter] = mat[j][i]
                 counter += 1
 
         assert counter == fp_num
 
-        Label_Face    = [+1 for i in xrange(POSITIVE_SAMPLE)]
-        Label_NonFace = [-1 for i in xrange(fp_num)]
+        Label_Face    = [+1 for i in range(POSITIVE_SAMPLE)]
+        Label_NonFace = [-1 for i in range(fp_num)]
 
         _label = numpy.array(Label_Face + Label_NonFace)
 
@@ -157,7 +157,7 @@ class Cascade:
     def predict(self):
 
         output = numpy.zeros(POSITIVE_SAMPLE + NEGATIVE_SAMPLE, dtype= numpy.float16)
-        for i in xrange(self.classifierNum):
+        for i in range(self.classifierNum):
 
             self.strong_classifier[i].prediction(mat, th = 0)
 
