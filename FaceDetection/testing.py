@@ -23,14 +23,14 @@ haar   = Feature(TRAINING_IMG_WIDTH, TRAINING_IMG_HEIGHT)
 
 mat = numpy.zeros((haar.featuresNum, tot_samples))
 
-for i in xrange(face.sampleNum):
+for i in range(face.sampleNum):
     featureVec = haar.calFeatureForImg(face.images[i])
-    for j in xrange(haar.featuresNum):
+    for j in range(haar.featuresNum):
         mat[j][i                     ]  = featureVec[j]
         
-for i in xrange(nonFace.sampleNum):
+for i in range(nonFace.sampleNum):
     featureVec = haar.calFeatureForImg(nonFace.images[i])
-    for j in xrange(haar.featuresNum):
+    for j in range(haar.featuresNum):
         mat[j][i + face.sampleNum] = featureVec[j]
 
 
@@ -40,7 +40,7 @@ output = model.prediction(mat, th=0)
 
 detectionRate = numpy.count_nonzero(output[0:100] == LABEL_POSITIVE) * 1./ 100
 
-print output
+print(output)
 
 
 
