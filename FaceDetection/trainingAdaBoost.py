@@ -41,14 +41,14 @@ else:
     if DEBUG_MODEL is True:
         _mat = numpy.zeros((haar.featuresNum, tot_samples))
 
-        for i in xrange(Face.sampleNum):
+        for i in range(Face.sampleNum):
             featureVec = haar.calFeatureForImg(Face.images[i])
-            for j in xrange(haar.featuresNum):
-                _mat[j][i                     ]  = featureVec[j]
+            for j in range(haar.featuresNum):
+                _mat[j][i] = featureVec[j]
 
-        for i in xrange(nonFace.sampleNum):
+        for i in range(nonFace.sampleNum):
             featureVec = haar.calFeatureForImg(nonFace.images[i])
-            for j in xrange(haar.featuresNum):
+            for j in range(haar.featuresNum):
                 _mat[j][i + Face.sampleNum] = featureVec[j]
 
         numpy.save(FEATURE_FILE_TRAINING, _mat)
@@ -66,8 +66,8 @@ featureNum, sampleNum = _mat.shape
 assert sampleNum  == (POSITIVE_SAMPLE + NEGATIVE_SAMPLE)
 assert featureNum == FEATURE_NUM
 
-Label_Face    = [+1 for i in xrange(POSITIVE_SAMPLE)]
-Label_NonFace = [-1 for i in xrange(NEGATIVE_SAMPLE)]
+Label_Face    = [+1 for i in range(POSITIVE_SAMPLE)]
+Label_NonFace = [-1 for i in range(NEGATIVE_SAMPLE)]
 
 label = numpy.array(Label_Face + Label_NonFace)
 
@@ -83,4 +83,4 @@ else:
     model.train()
     model.saveModel(cache_filename)
 
-print model
+print(model)
