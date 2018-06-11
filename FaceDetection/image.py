@@ -30,7 +30,7 @@ class Image:
                 self.img     = self.img[:,:, 1]
 
         else:
-            assert Mat != None
+            assert Mat.all() != None
             self.img     = Mat
 
         self.label   = label
@@ -125,17 +125,17 @@ class ImageSet:
         self.curFileIdx = self.sampleNum
         self.label  = label
 
-        self.images = [None for _ in xrange(self.sampleNum)]
+        self.images = [None for _ in range(self.sampleNum)]
 
         processed = -10.
-        for i in xrange(self.sampleNum):
+        for i in range(self.sampleNum):
             self.images[i] = Image(imgDir + self.fileList[i], label)
 
             if i % (self.sampleNum / 10) == 0:
                 processed += 10.
-                print "Loading ", processed, "%"
+                print("Loading ", processed, "%")
 
-        print "Loading  100 %\n"
+        print("Loading  100 %\n")
 
 
     def readNextImg(self):
